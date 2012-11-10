@@ -13,12 +13,11 @@
 \cswaddress{}
 }
 
-\section{Abstract}
-Majority of information retrieval and web search use the inverted index as the backbone for their keyword based search. Unfortunately, inverted index fail to capture the semantic of the language and thus keyword based approach can only go as far as giving the relevant hits. We propose semantic indexing scheme and a new search interface that will not only augment keyword based search approach but would also answer questions that are posed to it in natural language.
-\\
-The indexer would do a semantic encoding of english text corpus to build its index store. As new data comes in, the index store would get updated. For querying, we would allow a web interface that can take natural language query and would search the index store to find an answer to the query. We would also provide APIs for building the index and a SQL/python interface for searching the index. 
+\section{Introduction}
+Majority of information retrieval and web search use the inverted index as the backbone for their keyword based search. Unfortunately, inverted index fail to capture the semantic of the language and thus keyword based approach can only go as far as giving the relevant hits. We propose semantic indexing scheme which can encode natural languages without losing semantic relationships.
  \\
-The semantic encoding in our proposal would involve parsing of the english sentences which would improve upon the work done by Matthew Fay and Jodyann Coley. Some of the improvements we propose are:
+ \\
+The proposed semantic encoding would involve parsing of each sentence, deriving its semantic model and storing the encoded representation. Matthew Fay and Jodyann Coley in his work SemantcSQL have attempted to encode natural language in SQL. While SemanticSQL can encode simple sentences, it fails to encode and accurately recover the semantic information from the stored representation for complex sentences. We aim to build a model that can derive semantic structure from complex sentences and a new schema which can accurately store the derived semantic model. In the following paragraph we illustrate different cases their system currently can not handle and propose a new semantic model which incorporates them.
 \begin{enumerate}
 \item{
 Probabilistic Parsing: Our system would incorporate a probabilistic sentence parser which would allow the system to intelligently identify the part-of-speech of previously unknown words and appropriately add them to the index store.
@@ -49,8 +48,7 @@ Handling constraints around conjunctions and disjunctions.
 }
 
 \end{enumerate}
-
-
+The indexer would do a semantic encoding of english text corpus to build its index store. As new data comes in, the index store would get updated. For querying, we would allow a web interface that can take natural language query and would search the index store to find an answer to the query. We would also provide APIs for building the index and a SQL/python interface for searching the index. 
 
 \bibliography{references} \bibliographystyle{cswapa}
 
