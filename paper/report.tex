@@ -2,9 +2,9 @@
 \usepackage{csw} 
 \usepackage{cswapa} 
 \usepackage{times}
+\usepackage{spverbatim}
 
 \begin{document} 
-
 \cswtitleblock{
 \cswtitle{Semantic Indexing}
 \cswauthor{Anant Bhardwaj}{anantb@csail.mit.edu}
@@ -20,66 +20,102 @@ Majority of information retrieval and web search use the inverted index as the b
 The proposed semantic encoding would involve parsing of each sentence, deriving its semantic model and storing the encoded representation. Matthew Fay and Jodyann Coley in his work SemantcSQL have attempted to encode natural language in SQL. While SemanticSQL can encode simple sentences, it fails to encode and accurately recover the semantic information from the stored representation for complex sentences. We aim to build a model that can derive semantic structure from complex sentences and a new schema which can accurately store the derived semantic model. In the following paragraph we illustrate different cases their system currently can not handle and propose a new semantic model which incorporates them.
 \begin{enumerate}
 \item{
-Probabilistic Parsing: Our system would incorporate a probabilistic sentence parser which would allow the system to intelligently identify the part-of-speech of previously unknown words and appropriately add them to the index store.
+\textbf{Probabilistic Parsing}\\
+Our system would incorporate a probabilistic sentence parser which would allow the system to intelligently identify the part-of-speech of previously unknown words and appropriately encode them.
 }
 
 \item{
-Multiple adverbs and prepositional phrases: The current implementation only allows a single occurrence of location, adverb, and instrument phrases. Our system would allow sentences such as "John slept under the tree in the park" to be understood, and the question "Where did John sleep" would return "under the tree in the park".
+\textbf{Multiple Adverbs and Prepositional Phrases}\\
+The current implementation only allows a single occurrence of location, adverb, and instrument phrases. Our system would allow sentences such as \emph{John slept under the tree in the park} to be understood, and the question ``Where did John sleep?'' would return \emph{under the tree in the park'}.
 }
 
 \item{
-Noun Phrases with relative classes, and with time:  Show me all the widgets that were selected last Tuesday.
+\textbf{Noun Phrases with Relative Classes, and Time}
+\emph{
+\begin{enumerate}
+\item{Show me all the states with population greater than 1 million.}
+\item{Show me all the widgets that were selected yesterday.}
+\end{enumerate}
+}
 }
 
 \item{
-Handling complex negation (negation of x AND Y kind of phrases)
-}cd 
-
-\item{
-Intersective vs. Non-intersective adjectives
-
-intersective adjectives:
-The car is a red Volkswagen.
-Grace is a hairy brown dog.
-We drove up yet another serpentine mountain road.
-
-non-intersective adjectives:
-Viktor is a former Catholic.
-The alleged thief has arrived in court.
+\textbf{Either-Or and Neither-Nor}
+\emph{
+\begin{enumerate}
+\item{Josh ate either bread or apple (exclusive)}
+\item{Josh didn't eat either bread or apple (negation, inclusive)}
+\item{Josh ate neither bread nor apple (inclusive).}
+\end{enumerate}
+}
 }
 
 \item{
-Complex causality handling: The current implementation only allows a primitive causality of 'if then' kind. Expanding it to more complex causality mapping would allow us handle complex causality.
-
-Anna told Alex to return the chair because it was broken. 
-They moved here because of the work.
-Just because John is tired we decided to stay at home.
-Just because John is tired does not mean Mary and John will not go to the family dinner.
-We can leave after the rain stops.
-If Mary finishes her homework and the weather is good then Mary will go for a walk.
-
-Relating events based on time:
-Did John come home after the fire alarm went off?
-
+\textbf{Intersective vs. Non-Intersective Adjectives}\\
+\emph{\textbf{Intersective Adjectives:}}
+\emph{
+\begin{enumerate}
+\item{The car is a red Volkswagen.}
+\item{Grace is a hairy brown dog.}
+\item{We drove up yet another serpentine mountain road.}
+\end{enumerate}
 }
 
-\item{
-Handling constraints around conjunctions and disjunctions...
-Depending on the weather, John will go for a walk or watch a movie.
+\emph{\textbf{Non-Intersective Adjectives:}}
+\emph{
+\begin{enumerate}
+\item{Viktor is a former Catholic.}
+\item{The alleged thief has arrived in court.}
+\end{enumerate}
+}
 }
 
+
 \item{
-Handling quantifiers. For instance, we would be able to answer questions like: 
+\textbf{Complex Causality} \\
+The current implementation only allows a primitive causality of 'if then' kind. Expanding it to more complex causality mapping would allow us handle complex causality.
+\emph{
+\begin{enumerate}
+\item {Anna told Alex to return the chair because it was broken.}
+\item {They moved here because of the work.}
+\item{Because John is tired we decided to stay at home.}
+\item{We can leave after the rain stops.}
+\item{If Mary finishes her homework and the weather is good then Mary will go for a walk.}
+\end{enumerate}
+}
 
-How many times have John watched the movie?
-How much milk have John got in the fridge?
-Is there any milk in the fridge?
+\emph{\textbf{Relating events based on time:}}
+\emph{
+\begin{enumerate}
+\item{Did John come home after the fire alarm went off?}
+\end{enumerate}
+}
+}
 
+
+\item{
+\textbf{Conjunctions and Disjunctions}
+\emph{
+\begin{enumerate}
+\item{Depending on the weather, John will go for a walk or watch a movie.}
+\end{enumerate}
+}
+}
+
+
+\item{
+\textbf{Quantifiers}\\
+For instance, we would be able to answer questions like:
+\emph{
+\begin{enumerate}
+\item{How many times have John watched the movie?}
+\item{How much milk have John got in the fridge?}
+\item{Is there any milk in the fridge?}
+\end{enumerate}
+}
 }
 
 \end{enumerate}
-The indexer would do a semantic encoding of english text corpus to build its index store. As new data comes in, the index store would get updated. For querying, we would allow a web interface that can take natural language query and would search the index store to find an answer to the query. We would also provide APIs for building the index and a SQL/python interface for searching the index. 
-
+We will also develop an infrastructure which can store the encoded semantic model for the types of sentences described above. This infrastructure would allow natural language query through our web interface and a REST Query interface so that other applications, regardless of the programming language they use, can build upon our system.
 \bibliography{references} \bibliographystyle{cswapa}
-
 \end{document} 
