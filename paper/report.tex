@@ -33,18 +33,48 @@ Noun Phrases with relative classes, and with time:  Show me all the widgets that
 
 \item{
 Handling complex negation (negation of x AND Y kind of phrases)
-}
+}cd 
 
 \item{
 Intersective vs. Non-intersective adjectives
+
+intersective adjectives:
+The car is a red Volkswagen.
+Grace is a hairy brown dog.
+We drove up yet another serpentine mountain road.
+
+non-intersective adjectives:
+Viktor is a former Catholic.
+The alleged thief has arrived in court.
 }
 
 \item{
-Complex causality handling: The current implementation only allows a primitive causality of 'if then' kind. Expanding to to more complex causality mapping would allow us handle complex causality.
+Complex causality handling: The current implementation only allows a primitive causality of 'if then' kind. Expanding it to more complex causality mapping would allow us handle complex causality.
+
+Anna told Alex to return the chair because it was broken. 
+They moved here because of the work.
+Just because John is tired we decided to stay at home.
+Just because John is tired does not mean Mary and John will not go to the family dinner.
+We can leave after the rain stops.
+If Mary finishes her homework and the weather is good then Mary will go for a walk.
+
+Relating events based on time:
+Did John come home after the fire alarm went off?
+
 }
 
 \item{
 Handling constraints around conjunctions and disjunctions...
+Depending on the weather, John will go for a walk or watch a movie.
+}
+
+\item{
+Handling quantifiers. For instance, we would be able to answer questions like: 
+
+How many times have John watched the movie?
+How much milk have John got in the fridge?
+Is there any milk in the fridge?
+
 }
 
 \end{enumerate}
