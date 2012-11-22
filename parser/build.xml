@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+
+<!-- 
+     Wrapper Over Stanford Parser
+     AUTHOR: ANANT BHARDWAJ
+     Email:  anantb@csail.mit.edu
+
+-->
+
+
+<project name="parser" default="war-parser" basedir=".">
+  <property name="javac.source" value="1.6"/>
+  <property name="javac.target" value="1.6"/>
+	
+  <property name="dist.dir" location="dist"/>
+  <property name="lib.dir" location="third-party"/>
+	
+  <property name="project.name" value="parser"/>
+
+
+
+  
+
+
+  
+
+  <target name="war-parser"	
+	description="Build parser war file">
+	<sequential>
+      <war destfile="${dist.dir}/${project.name}.war"
+           webxml="WebContent/WEB-INF/web.xml">
+        <fileset dir="WebContent" excludes="WEB-INF/web.xml"/>
+        <lib dir="${lib.dir}" includes="*.jar" />
+      </war>
+    </sequential>
+  </target>
+
+
+  	
+  <target name="clean"
+    description="Removes contents of build directory">
+    <delete dir="${dist.dir}"/>
+  </target>
+
+  
+
+
+
+
+
+</project>
