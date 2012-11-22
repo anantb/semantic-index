@@ -16,10 +16,12 @@
 	<input type="button" id="parse" value="Submit" />
 	<br />
 	</form>
+	<br />
 	<div id= "output">
 	</div>
 	<script type="text/javascript">
 	$("#parse").click(function(){
+	    $("#output").html("Loading...")
 	    $("#output").load('parser.jsp?input='+encodeURIComponent($("#input-text").val()));
 		
 	});
