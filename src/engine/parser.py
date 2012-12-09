@@ -28,6 +28,8 @@ def propbank_parse_web(sen, url='/parse'):
 	return res	
 	
 
+
+# do not use this (use local version instead)
 def stanford_parse_web(sen, url='/parser/parser.jsp'):
 	conn = httplib.HTTPConnection("anantb.csail.mit.edu:8080")
 	headers = {"Content-type": "application/x-www-form-urlencoded",

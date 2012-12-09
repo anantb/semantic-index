@@ -103,7 +103,7 @@ class EventAction(models.Model):
 
 
 
-class EventBenificiary(models.Model):
+class EventBeneficiary(models.Model):
 	id = models.AutoField(primary_key=True)
 	benificiary = models.ForeignKey('Noun')
 	event = models.ForeignKey('Event')
