@@ -44,6 +44,7 @@ def handle_sentence(sen, reset = True):
 
 if __name__ == "__main__":
 	handle_sentence('The red ball bounces well.')
+	handle_sentence('The blue ball bounces badly.', False)
 	q = EventQuery()
 	res = q.search_action('bounces')
 	print res
