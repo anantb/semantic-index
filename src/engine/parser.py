@@ -41,7 +41,7 @@ def stanford_parse_web(sen, url='/parser/parser.jsp'):
 	return res	
 	
 if __name__ == "__main__":
-	print stanford_parse_local('John bought a green car.')
+	#print stanford_parse_local('John bought a green car.')
 	print propbank_parse_web('John bought a green car at Cambridge.')
 	#print propbank_parse_web('I hate NLP')
 	#print stanford_parse_web('I hate NLP')
