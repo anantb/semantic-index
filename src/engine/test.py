@@ -1,4 +1,9 @@
 from utils import *
+import cPickle as pickle
+import os, sys
 
 
-print parse({'input':'I love nlp.'})
+#x =  parse({'input':'John loves nlp.'})
+
+#print x.strip()
+

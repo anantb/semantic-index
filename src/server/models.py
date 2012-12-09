@@ -32,20 +32,20 @@ class Action(models.Model):
 		db_table = "actions"
 
 		
-class Object(models.Model):
-	id = models.AutoField(primary_key=True)
-	name = models.CharField(max_length=50, unique=True)
+class Noun(models.Model):
+	id = models.AutoField(primary_key=True, unique=True)
+	name = models.CharField(max_length=50)
 	
 	def __unicode__(self):
 		return self.name
 	
 	class Meta:
-		db_table = "objects"
+		db_table = "nouns"
 		
 
 class Adjective(models.Model):
-	id = models.AutoField(primary_key=True)
-	name = models.CharField(max_length=50, unique=True)
+	id = models.AutoField(primary_key=True, unique=True)
+	name = models.CharField(max_length=50)
 	
 	def __unicode__(self):
 		return self.name
@@ -55,8 +55,8 @@ class Adjective(models.Model):
 		
 		
 class Adverb(models.Model):
-	id = models.AutoField(primary_key=True)
-	name = models.CharField(max_length=50, unique=True)
+	id = models.AutoField(primary_key=True, unique=True)
+	name = models.CharField(max_length=50)
 	
 	def __unicode__(self):
 		return self.name
@@ -68,7 +68,7 @@ class Adverb(models.Model):
 
 class EventAgent(models.Model):
 	id = models.AutoField(primary_key=True)
-	agent = models.ForeignKey('Object')
+	agent = models.ForeignKey('Noun')
 	event = models.ForeignKey('Event')
 	
 	def __unicode__(self):
@@ -80,7 +80,7 @@ class EventAgent(models.Model):
 
 class EventPatient(models.Model):
 	id = models.AutoField(primary_key=True)
-	patient = models.ForeignKey('Object')
+	patient = models.ForeignKey('Noun')
 	event = models.ForeignKey('Event')
 	
 	def __unicode__(self):
@@ -105,7 +105,7 @@ class EventAction(models.Model):
 
 class EventBenificiary(models.Model):
 	id = models.AutoField(primary_key=True)
-	benificiary = models.ForeignKey('Object')
+	benificiary = models.ForeignKey('Noun')
 	event = models.ForeignKey('Event')
 	
 	def __unicode__(self):
@@ -118,7 +118,7 @@ class EventBenificiary(models.Model):
 
 class EventInstrument(models.Model):
 	id = models.AutoField(primary_key=True)
-	instrument = models.ForeignKey('Object')
+	instrument = models.ForeignKey('Noun')
 	event = models.ForeignKey('Event')
 	
 	def __unicode__(self):
@@ -130,7 +130,7 @@ class EventInstrument(models.Model):
 
 class EventLocation(models.Model):
 	id = models.AutoField(primary_key=True)
-	location = models.ForeignKey('Object')
+	location = models.ForeignKey('Noun')
 	event = models.ForeignKey('Event')
 	
 	def __unicode__(self):
@@ -142,7 +142,7 @@ class EventLocation(models.Model):
 
 class EventTime(models.Model):
 	id = models.AutoField(primary_key=True)
-	location = models.ForeignKey('Object')
+	location = models.ForeignKey('Noun')
 	event = models.ForeignKey('Event')
 	
 	def __unicode__(self):
@@ -155,7 +155,7 @@ class EventTime(models.Model):
 class EventAdjective(models.Model):
 	id = models.AutoField(primary_key=True)
 	adjective = models.ForeignKey('Adjective')
-	obj = models.ForeignKey('Object')
+	obj = models.ForeignKey('Noun')
 	event = models.ForeignKey('Event')
 	
 	def __unicode__(self):
