@@ -17,16 +17,24 @@ from db import *
 def handle_sentence(sen, reset = True):
 	e = EventInstance(reset)
 	res = stanford_parse_local(sen)
-	temp = {'action':None, 'agent':None, 'patient': None}
+	temp = {}
 	for k, v in res.iteritems():
 		val = v[1]
-		val = val[:val.find('-')]
+		word = val[:val.find('-')]
 		if(k == 'root'):
-			temp['action'] = e.insert_action(val)
+			action = e.insert_action(word)
+			temp[v[1]] = action
 		elif(k=='nsubj'):
-			temp['agent'] = e.insert_agent(val)
+			agent = e.insert_agent(word)
+			temp[v[1]] = agent
 		elif(k=='dobj'):
-			temp['patient'] = e.insert_patient(val)
+			patient = e.insert_patient(word)
+			temp[v[1]] = patient
+		elif(k=='advmod'):
+			e.insert_adverb(word, temp[v[0]])
+		elif(k=='amod'):
+			e.insert_adjective(word, temp[v[0]])
+		
 		
 			
 			
@@ -35,7 +43,7 @@ def handle_sentence(sen, reset = True):
 
 
 if __name__ == "__main__":
-	handle_sentence('Blue Max plays tennis well.')
+	handle_sentence('The red ball bounces well.')
 	q = EventQuery()
-	res = q.search_action('plays')
+	res = q.search_action('bounces')
 	print res
