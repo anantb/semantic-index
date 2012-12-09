@@ -1,4 +1,4 @@
-import subprocess, os, re, httplib, urllib
+import subprocess, os, re, httplib, urllib, re
 path = os.path.abspath(os.path.dirname(__file__))
 
 
@@ -13,8 +13,15 @@ def stanford_parse_local(sen):
 	cmd = ["java -classpath %s/stanford-parser.jar:%s/stanford-parser-2.0.4-models.jar:%s: Parser '%s'" %(path,path,path, sen)]
 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell = True)
 	out, err = p.communicate()
-	return str(out.strip())
-	
+	x = str(out.strip())
+	z = re.findall(r'(\w+?\(.+?\))', x)
+	res = {}
+	for i in xrange(0, len(z)):
+		p = z[i][:z[i].find('(')]
+		q = z[i][z[i].find('(')+1: z[i].find(',')]
+		r = z[i][z[i].find(',')+1:-1].strip()
+		res[p]=[q,r]
+	return res
 
 
 def propbank_parse_web(sen, url='/parse'):
@@ -41,7 +48,7 @@ def stanford_parse_web(sen, url='/parser/parser.jsp'):
 	return res	
 	
 if __name__ == "__main__":
-	#print stanford_parse_local('John bought a green car.')
-	print propbank_parse_web('John bought a green car at Cambridge.')
+	print stanford_parse_local('John bought a green car.')
+	#print propbank_parse_web('John bought a green car at Cambridge.')
 	#print propbank_parse_web('I hate NLP')
 	#print stanford_parse_web('I hate NLP')
