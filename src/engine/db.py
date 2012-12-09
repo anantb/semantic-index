@@ -15,7 +15,9 @@ Actual Schema
 
 '''
 class EventInstance:
-	def __init__(self):
+	def __init__(self, reset=True):
+		if(reset):
+			Event.objects.all().delete()
 		self.e = Event()
 		self.e.save()
 	
@@ -58,40 +60,40 @@ class EventInstance:
 		
 	
 	
-	def insert_beneficiary(self, beneficiary):
+	def insert_beneficiary(self, beneficiary, action):
 		_beneficiary = None
 		try:
 			_beneficiary = Noun.objects.get(name = beneficiary)
 		except Noun.DoesNotExist:
 			_beneficiary = Noun(name= beneficiary)
 			_beneficiary.save()
-		_ebeneficiary = EventBenificiary(beneficiary = _beneficiary, event = self.e)
+		_ebeneficiary = EventBenificiary(beneficiary = _beneficiary, action = action, event = self.e)
 		_ebeneficiary.save()
 		return _beneficiary
 		
 	
 	
-	def insert_instrument(self, instrument):
+	def insert_instrument(self, instrument, action):
 		_instrument = None
 		try:
 			_instrument = Noun.objects.get(name = instrument)
 		except Noun.DoesNotExist:
 			_instrument = Noun(name= instrument)
 			_instrument.save()
-		_einstrument = EventInstrument(instrument = _instrument, event = self.e)
+		_einstrument = EventInstrument(instrument = _instrument, action = action, event = self.e)
 		_einstrument.save()
 		return _instrument
 		
 	
 	
-	def insert_location(self, location):
+	def insert_location(self, location, action):
 		_location = None
 		try:
 			_location = Noun.objects.get(name = location)
 		except Noun.DoesNotExist:
 			_location = Noun(name= location)
 			_location.save()
-		_elocation = EventLocation(location = _location, event = self.e)
+		_elocation = EventLocation(location = _location, action = action, event = self.e)
 		_elocation.save()
 		return _location
 	
@@ -99,15 +101,15 @@ class EventInstance:
 	
 	
 		
-	def insert_time(self, time):
+	def insert_time(self, time, action):
 		_time = None
 		try:
 			_time = Noun.objects.get(name = time)
 		except Noun.DoesNotExist:
 			_time = Noun(name= time)
 			_time.save()
-		_elocation = EventTime(time = _time, event = e)
-		_elocation.save()
+		_etime = EventTime(time = _time, action = action, event = self.e)
+		_etime.save()
 		return _time
 	
 	
@@ -120,9 +122,9 @@ class EventInstance:
 		except Adjective.DoesNotExist:
 			_adjective = Adjective(name= adjective)
 			_adjective.save()
-		_eadjective = EventAdjective(adjective = _adjective, action = action, event = self.e)
+		_eadjective = EventAdjective(adjective = _adjective, noun = noun, event = self.e)
 		_eadjective.save()
-		
+		return _adjective
 	
 	
 	
@@ -135,6 +137,7 @@ class EventInstance:
 			_adverb.save()
 		_eadverb = EventAdverb(adverb = _adverb, action = action, event = self.e)
 		_eadverb.save()
+		return _adverb
 	
 		
 		
@@ -153,21 +156,32 @@ class EventQuery:
 		for e in event_actions:
 			event = {}
 			event['id'] = e.event_id
-			event['agents'] = [ea.agent.name for ea in EventAgent.objects.filter(event = e.event)]
-			event['patients'] = [ep.patient.name for ep in EventPatient.objects.filter(event = e.event)]
-			event['beneficiary'] = [eb.beneficiary.name for ea in EventBeneficiary.objects.filter(event = e.event)]
-			event['location'] = [el.location.name for el in EventLocation.objects.filter(event = e.event)]
-			event['time'] = [et.time.name for et in EventTime.objects.filter(event = e.event)]
-			event['instrument'] = [ei.instrument.name for ea in EventInstrument.objects.filter(event = e.event)]
+			event['agents'] = [{'agent': ea.agent.name} for ea in EventAgent.objects.filter(event = e.event)]
+			event['patients'] = [{'patient': ep.patient.name} for ep in EventPatient.objects.filter(event = e.event)]
+			event['beneficiaries'] = [{'beneficiary':eb.beneficiary.name} for ea in EventBeneficiary.objects.filter(event = e.event)]
+			event['locations'] = [{'location':el.location.name, 'action':el.action.name} for el in EventLocation.objects.filter(event = e.event)]
+			event['time'] = [{'time':et.time.name, 'action':et.action.name} for et in EventTime.objects.filter(event = e.event)]
+			event['instruments'] = [{'instrument':ei.instrument.name, 'action':ei.action.name} for ei in EventInstrument.objects.filter(event = e.event)]
+			event['adverbs'] = [{'adverb':ea.adverb.name, 'action':ea.action.name} for ea in EventAdverb.objects.filter(event = e.event)]
+			event['adjectives'] = [{'adjective':ea.adjective.name, 'noun':ea.noun.name} for ea in EventAdjective.objects.filter(event = e.event)]
 			res['events'].append(event)
 		return res	
 	
 		
 if __name__ == "__main__":
 	e = EventInstance()
-	e.insert_agent('I')
-	e.insert_action('hate')
-	e.insert_patient('Mango')
+	agent1 = e.insert_agent('John')
+	agent2 = e.insert_agent('Josh')
+	action = e.insert_action('cut')
+	patient = e.insert_patient('the mango')
+	instrument = e.insert_instrument('the mango', action)
+	time = e.insert_time('on 5 pm', action)
+	location = e.insert_location('at Stata Center', action)
+	adj1 = e.insert_adjective('Hungry', agent1)
+	adj2 = e.insert_adjective('angry', agent2)
+	adv = e.insert_adverb('properly', action)
+	
+	
 	q = EventQuery()
-	res = q.search_action('hate')
+	res = q.search_action('cut')
 	print res
