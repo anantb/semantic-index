@@ -18,22 +18,29 @@ def handle_sentence(sen, reset = True):
 	e = EventInstance(reset)
 	res = stanford_parse_local(sen)
 	temp = {}
-	for k, v in res.iteritems():
-		val = v[1]
-		word = val[:val.find('-')]
-		if(k == 'root'):
-			action = e.insert_action(word)
-			temp[v[1]] = action
-		elif(k=='nsubj'):
-			agent = e.insert_agent(word)
-			temp[v[1]] = agent
-		elif(k=='dobj'):
-			patient = e.insert_patient(word)
-			temp[v[1]] = patient
-		elif(k=='advmod'):
-			e.insert_adverb(word, temp[v[0]])
-		elif(k=='amod'):
-			e.insert_adjective(word, temp[v[0]])
+	tags = ['root', 'nsubj', 'dobj', 'amod', 'advmod']
+	print res
+	for tag in tags:
+		try:
+			v = res[tag]
+			val = v[1]
+			word = val[:val.find('-')]
+			if(tag=='root'):
+				action = e.insert_action(word)
+				temp[v[1]] = action
+			elif(tag =='nsubj'):
+				agent = e.insert_agent(word)
+				temp[v[1]] = agent
+			elif(tag=='dobj'):
+				patient = e.insert_patient(word)
+				temp[v[1]] = patient
+			elif(tag=='advmod'):
+				e.insert_adverb(word, temp[v[0]])
+			elif(tag=='amod'):
+				adj  = e.insert_adjective(word, temp[v[0]])
+				temp[v[1]] = adj
+		except KeyError:
+			pass
 		
 		
 			
@@ -43,8 +50,8 @@ def handle_sentence(sen, reset = True):
 
 
 if __name__ == "__main__":
-	handle_sentence('The red ball bounces well.')
-	handle_sentence('The blue ball bounces badly.', False)
+	handle_sentence('The red and green ball bounces well.')
+	handle_sentence('The blue and purple ball bounces badly.', False)
 	q = EventQuery()
 	res = q.search_action('bounces')
 	print res
