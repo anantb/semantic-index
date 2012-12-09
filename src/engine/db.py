@@ -1,26 +1,19 @@
-import httplib, urllib, subprocess
+import  os, sys, subprocess
 if __name__ == "__main__":
 	p = os.path.abspath(os.path.dirname(__file__))
 	if(os.path.abspath(p+"/..") not in sys.path):
 		sys.path.append(os.path.abspath(p+"/.."))
 	os.environ.setdefault("DJANGO_SETTINGS_MODULE", "server.settings")
-
 from server.models import *
 
 
-def parse(params, url='/parser/parser.jsp'):
-	conn = httplib.HTTPConnection("anantb.csail.mit.edu:8080")
-	headers = {"Content-type": "application/x-www-form-urlencoded",
-			"Accept": "text/plain"}
-	params = urllib.urlencode(params)
-	conn.request("POST", url, params, headers)	
-	res = conn.getresponse().read()
-	return res
+'''
+@author: anant bhardwaj
+@date: Dec 8, 2012
 
+Utility methods
 
-def parse_local(sen):
-	subprocess.call(["ls", "-l"])
-	
+'''
 
 def test_db():
 	action = 'loves'
@@ -78,4 +71,6 @@ def test_db():
 	print agents
 	print patients 
 	
-	
+
+if __name__ == "__main__":
+	print test_db()

@@ -1,7 +1,6 @@
-from utils import *
+from parser import *
 
-
-stanford = parse({'input':'Max plays tennis well.'})
+stanford = stanford_parse_local('Max plays tennis well.')
 sstanford = stanford.split('),')
 print sstanford
 for i in sstanford:
@@ -55,5 +54,5 @@ if obj != '':
         object = object.split('.')[0]
 
 
-#print subject + ' ' + event + ' ' + object+ ' ' + adjective + ' ' + adverb
+print subject + ' ' + event + ' ' + object+ ' ' + adjective + ' ' + adverb
  

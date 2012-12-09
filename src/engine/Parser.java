@@ -12,6 +12,15 @@ import edu.stanford.nlp.ling.Sentence;
 import edu.stanford.nlp.trees.*;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 
+
+'''
+@author: anant bhardwaj
+@date: Dec 8, 2012
+
+A class that wraps stanford parser
+
+'''
+
 class Parser {
 
 	public static void main(String[] args) {
