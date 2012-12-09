@@ -1,6 +1,8 @@
 from parser import *
+from db import *
 
-stanford = stanford_parse_local('Max plays tennis well.')
+
+stanford = stanford_parse_local('Blue Max plays tennis well.')
 sstanford = stanford.split('),')
 print sstanford
 for i in sstanford:
@@ -14,7 +16,7 @@ subj = ''
 subject = ''
 adverb = ''
 adjective = ''
-object = ''
+objec = ''
 adj= ''
 adv = ''
 subj = ''
@@ -49,10 +51,25 @@ if adv != '':
 if obj != '':
     obj = obj.split(', ')
     obj1 = obj[1].split('-')
-    object = obj1[0]
-    if '.' in object:
-        object = object.split('.')[0]
+    objec = obj1[0]
+    if '.' in objec:
+        objec = objec.split('.')[0]
+		
+e = EventInstance()
+agent1 = e.insert_agent(subject)
+action = e.insert_action(event)
+patient = e.insert_patient(objec)
+#instrument = e.insert_instrument('with a knife', action)
+#time = e.insert_time('on 5 pm', action)
+#location = e.insert_location('at Stata Center', action)
+adj1 = e.insert_adjective(adjective, agent1)
+#adj2 = e.insert_adjective('angry', agent2)
+adve = e.insert_adverb(adverb, action)
 
+q = EventQuery()
+res = q.search_action('plays')
+print res
+		
 
-print subject + ' ' + event + ' ' + object+ ' ' + adjective + ' ' + adverb
+print subject + ' ' + event + ' ' + objec + ' ' + adjective + ' ' + adverb
  
