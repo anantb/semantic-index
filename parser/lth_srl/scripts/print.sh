@@ -1,0 +1,1 @@
+java -cp jars/lthsrl.jar:jars/utilities.jar se.lth.cs.nlp.depsrl.format.CoNLL2008Format
