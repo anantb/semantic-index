@@ -2,11 +2,7 @@ from parser import *
 from db import *
 
 
-stanford = stanford_parse_local('Blue Max plays tennis well.')
-sstanford = stanford.split('),')
-print sstanford
-def getvalues(s):
-	sstanford = s
+def getvalues(ssstanford):
 	for i in sstanford:
 	    if('root' in i):
 	        root = i
@@ -42,7 +38,7 @@ def getvalues(s):
 	    adj1 = adj[1].split('-')
 	    adjective = adj1[0]
 		adjref1= adjref.split('-')
-		adjRef = adjref1[0]
+		adjRef = adjref1[0]			
 	    if '.' in adjective:
 	        adjective = adjective.split('.')[0]
 	if subj != '':
@@ -78,19 +74,50 @@ def getvalues(s):
 		advRef = None
 	if obj = '':
 		obj = None
-	out = dict('event':event, 'adjective':[adjective, adjRef], 'adverb':[adverb, advRef], 'object':obj)
+		
+
+	if adjRef == object:
+		if advRef == event:
+			out = dict('event':[event,adverb], 'subject':[subject], 'object':[obj, adjective])
+		else:
+			out = dict('event':[event], 'subject':[subject], 'object':[obj, adjective])
+	else if adjRef == subject:
+		if advRef == event:
+			out = dict('event':[event,adverb], 'subject':[subject, adjective], 'object':[obj])
+		else:
+			out = dict('event':[event], 'subject':[subject, adjective], 'object':[obj])
+	else:
+		if advRef == event:
+			out = dict('event':[event,adverb], 'subject':[subject], 'object':[obj])
+		else:
+			out = dict('event':[event], 'subject':[subject], 'object':[obj])
 	return out	
 
-e = EventInstance(reset = False)
-agent1 = e.insert_agent(subject)
-action = e.insert_action(event)
-patient = e.insert_patient(objec)
+
+stanford = stanford_parse_local('Blue Max plays tennis well.')
+sstanford = stanford.split('),')
+e = EventInstance()
+sentence = getvalues(sstanford)
+if(len(sentence.get('event')) == 1):
+	action = e.insert_action(sentence.get('event')[0])
+if(len(sentence.get('event')) == 2):
+	action = e.insert_action(sentence.get('event')[0])
+	adve = e.insert_adverb(sentence.get('event')[1], action)
+if(len(sentence.get('subject')) == 1):
+	agent1 = e.insert_agent(sentence.get('subject')[0])
+if(len(sentence.get('subject')) == 2):
+	agent1 = e.insert_agent(sentence.get('subject')[0])
+	adje1 = e.insert_adjective(sentence.get('subject')[1], agent1)
+if(len(sentence.get('object')) == 1):
+	patient = e.insert_patient(sentence.get('object')[0])
+if(len(sentence.get('object')) == 2):
+	patient = e.insert_patient(sentence.get('object')[0])
+	adje1 = e.insert_adjective(sentence.get('object')[1], patient)
+
 #instrument = e.insert_instrument('with a knife', action)
 #time = e.insert_time('on 5 pm', action)
 #location = e.insert_location('at Stata Center', action)
-adj1 = e.insert_adjective(adjective, agent1)
-#adj2 = e.insert_adjective('angry', agent2)
-adve = e.insert_adverb(adverb, action)
+
 
 q = EventQuery()
 res = q.search_action('plays')
