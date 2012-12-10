@@ -24,3 +24,18 @@ def parse(request):
 		return HttpResponse(json.dumps(res), mimetype="application/json")
 	except:
 		return HttpResponse(json.dumps({'error':str(sys.exc_info())}), mimetype="application/json")
+		
+
+
+@csrf_exempt	
+def visualize(request):
+	try:
+		sen = re.split('\n', request.POST['text'])
+		sen = filter(lambda x: x!='' and x !='\n', sen)
+		act = request.POST['action']
+		#res = engine.handler.handle(sen, act)
+		res = {'name': 'root',  'children': [ { 'name':'nsubj'}, {'name':'nobj'}]}
+   
+		return HttpResponse(json.dumps(res), mimetype="application/json")
+	except:
+		return HttpResponse(json.dumps({'error':str(sys.exc_info())}), mimetype="application/json")

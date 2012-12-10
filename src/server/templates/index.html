@@ -7,10 +7,14 @@ Please enter the sentences below: <br />
 <br />
 Action: 
 <input type="text" id="action"></input> <br >
-<input type="button" id="parse" value="Submit" />
+<input type="button" id="parse" value="Search" />
+<input type="button" id="visualize" value="Visualize" />
 <br /> <br />
 <div id= "output">
 </div>
+<div id="body">
+ </div>
+
 <script type="text/javascript">
 $(document).ready(function(){
 	$("#output").html("")
@@ -18,29 +22,30 @@ $(document).ready(function(){
 		$("#output").html("Loading...")
 		$.post('parse', {'text':$("#sentences").val(), 'action':$("#action").val()}, 
 			function(res){
-				$("#output").html(JSON.stringify(res));
-				d3.json("flare.json", function(json) {
-				  root = json;
-				  root.x0 = h / 2;
-				  root.y0 = 0;
+				$("#output").html(JSON.stringify(res));				
+			}
+		);
+	});
+	
+	$("#visualize").click(function(){
+		$.post('visualize', {'text':$("#sentences").val(), 'action':$("#action").val()}, 
+			function(res){
+	  		  root = res;
+	  		  root.x0 = h / 2;
+	  		  root.y0 = 0;
 
-				  function toggleAll(d) {
-				    if (d.children) {
-				      d.children.forEach(toggleAll);
-				      toggle(d);
-				    }
-				  }
+	  		  function toggleAll(d) {
+	  		    if (d.children) {
+	  		      d.children.forEach(toggleAll);
+	  		      toggle(d);
+	  		    }
+	  		  }
 
-				  // Initialize the display to show a few nodes.
-				  root.children.forEach(toggleAll);
-				  toggle(root.children[1]);
-				  toggle(root.children[1].children[2]);
-				  toggle(root.children[9]);
-				  toggle(root.children[9].children[0]);
+	  		  // Initialize the display to show a few nodes.
+	  		  root.children.forEach(toggleAll);
+	  		  toggle(root.children[1]);
 
-				  update(root);
-				});
-				
+	  		  update(root);			
 			}
 		);
 	});
