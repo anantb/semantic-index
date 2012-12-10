@@ -17,9 +17,9 @@ from db import *
 def handle_sentence(sen, reset = True):
 	e = EventInstance(reset)
 	res = stanford_parse_local(sen)
-	temp = {}
-	tags = ['root', 'nsubj', 'dobj', 'amod', 'advmod']
 	print res
+	temp = {}
+	tags = ['root', 'nsubj', 'dobj', 'amod', 'advmod', 'conj_and']
 	for tag in tags:
 		try:
 			v = res[tag]
@@ -35,14 +35,19 @@ def handle_sentence(sen, reset = True):
 				patient = e.insert_patient(word)
 				temp[v[1]] = patient
 			elif(tag=='advmod'):
-				e.insert_adverb(word, temp[v[0]])
+				adv = e.insert_adverb(word, temp[v[0]])
+				temp[v[1]] = temp[v[0]]
 			elif(tag=='amod'):
 				adj  = e.insert_adjective(word, temp[v[0]])
-				temp[v[1]] = adj
+				temp[v[1]] = temp[v[0]]
+			elif(tag=='conj_and'):
+				val = v[0]
+				word = val[:val.find('-')]
+				adj  = e.insert_adjective(word, temp[v[1]])
+				temp[v[0]] = temp[v[1]]
 		except KeyError:
 			pass
-		
-		
+	print temp
 			
 			
 		
