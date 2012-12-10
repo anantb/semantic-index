@@ -14,38 +14,44 @@ from db import *
 	adj2 = e.insert_adjective('angry', agent2)
 	adv = e.insert_adverb('properly', action)
 """
+def get_index(k):
+	tag_order = ['root', 'nsubj', 'dobj', 'amod', 'advmod', 'conj_and']
+	if k in tag_order:
+		return tag_order.index(k)
+	else:
+		return 1000
+	
+
 def handle_sentence(sen, reset = True):
 	e = EventInstance(reset)
 	res = stanford_parse_local(sen)
 	temp = {}
-	tags = ['root', 'nsubj', 'dobj', 'amod', 'advmod', 'conj_and']
+	tags = sorted(res.items(), key = lambda x:get_index(x[0]))
 	for tag in tags:
-		try:
-			v = res[tag]
-			val = v[1]
+		k = tag[0]
+		v = tag[1]		
+		val = v[1]
+		word = val[:val.find('-')]
+		if(k=='root'):
+			action = e.insert_action(word)
+			temp[v[1]] = action
+		elif(k =='nsubj'):
+			agent = e.insert_agent(word)
+			temp[v[1]] = agent
+		elif(k=='dobj'):
+			patient = e.insert_patient(word)
+			temp[v[1]] = patient
+		elif(k=='advmod'):
+			adv = e.insert_adverb(word, temp[v[0]])
+			temp[v[1]] = temp[v[0]]
+		elif(k=='amod'):
+			adj  = e.insert_adjective(word, temp[v[0]])
+			temp[v[1]] = temp[v[0]]
+		elif(k=='conj_and'):
+			val = v[0]
 			word = val[:val.find('-')]
-			if(tag=='root'):
-				action = e.insert_action(word)
-				temp[v[1]] = action
-			elif(tag =='nsubj'):
-				agent = e.insert_agent(word)
-				temp[v[1]] = agent
-			elif(tag=='dobj'):
-				patient = e.insert_patient(word)
-				temp[v[1]] = patient
-			elif(tag=='advmod'):
-				adv = e.insert_adverb(word, temp[v[0]])
-				temp[v[1]] = temp[v[0]]
-			elif(tag=='amod'):
-				adj  = e.insert_adjective(word, temp[v[0]])
-				temp[v[1]] = temp[v[0]]
-			elif(tag=='conj_and'):
-				val = v[0]
-				word = val[:val.find('-')]
-				adj  = e.insert_adjective(word, temp[v[1]])
-				temp[v[0]] = temp[v[1]]
-		except KeyError:
-			pass
+			adj  = e.insert_adjective(word, temp[v[1]])
+			temp[v[0]] = temp[v[1]]
 			
 			
 
