@@ -1,10 +1,27 @@
+{% extends "base.html" %}
 {% block content %}
-<h1>Semantic Indexer</h1>
+<h1>Semantic Browser</h1>
 <hr />
-<p>People: </p>
-<ul>
-<li>Anant Bhardwaj</li>
-<li>Ekaterina Ob'yedkova</li>
-<li>Ravi Netravali</li>
-</ul>
+Please enter the sentences below: <br />
+<textarea id="sentences" rows="4" cols="50"></textarea>
+<br />
+Action: 
+<input type="text" id="action"></input> <br >
+<input type="button" id="parse" value="Submit" />
+<br /> <br />
+<div id= "output">
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#output").html("")
+	$("#parse").click(function(){
+		$("#output").html("Loading...")
+		$.post('/parse', {'text':$("#sentences").val(), 'action':$("#action").val()}, 
+			function(res){
+				$("#output").html(JSON.stringify(res));
+			}
+		);
+	});
+});
+</script>
 {% endblock %}

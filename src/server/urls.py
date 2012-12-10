@@ -8,4 +8,5 @@ urlpatterns = patterns('',
     # Examples:
     url(r'^$','server.views.index'),
     url(r'^index', 'server.views.index'),
+	url(r'^parse', 'server.views.parse'),
 )

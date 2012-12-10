@@ -17,7 +17,6 @@ from db import *
 def handle_sentence(sen, reset = True):
 	e = EventInstance(reset)
 	res = stanford_parse_local(sen)
-	print res
 	temp = {}
 	tags = ['root', 'nsubj', 'dobj', 'amod', 'advmod', 'conj_and']
 	for tag in tags:
@@ -49,13 +48,16 @@ def handle_sentence(sen, reset = True):
 			pass
 			
 			
-		
+
+def handle(sentences, action):
+	handle_sentence(sentences[0])
+	for i in xrange(1,len(sentences)):
+		handle_sentence(sentences[i], reset = False)
+	q = EventQuery()
+	res = q.search_action(action)
+	return res
 
 
 
 if __name__ == "__main__":
-	handle_sentence('The red and green ball bounces well.')
-	handle_sentence('The blue and purple ball bounces badly.', False)
-	q = EventQuery()
-	res = q.search_action('bounces')
-	print res
+	print handle(['The red and green ball bounces well.', 'The blue and purple ball bounces badly.'], 'bounces')

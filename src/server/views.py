@@ -1,5 +1,9 @@
 from django.http import *
 from django.shortcuts import render_to_response
+from django.views.decorators.csrf import csrf_exempt
+import engine
+from engine.handler import *
+import json, sys, re
 
 '''
 @author: Anant Bhardwaj
@@ -8,3 +12,15 @@ from django.shortcuts import render_to_response
 
 def index(request):
 	return render_to_response("index.html")
+
+
+@csrf_exempt	
+def parse(request):
+	try:
+		sen = re.split('\n', request.POST['text'])
+		sen = filter(lambda x: x!='' and x !='\n', sen)
+		act = request.POST['action']
+		res = engine.handler.handle(sen, act)
+		return HttpResponse(json.dumps(res), mimetype="application/json")
+	except:
+		return HttpResponse(json.dumps({'error':str(sys.exc_info())}), mimetype="application/json")
