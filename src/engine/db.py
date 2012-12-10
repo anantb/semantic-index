@@ -178,9 +178,8 @@ class EventQuery:
 		for action in actions:
 			events = {'name':action.name, 'children':[]}
 			event_actions = EventAction.objects.filter(action = action)
-			i = 1
 			for e in event_actions:
-				event = {'name':i, 'children':[]}
+				event = {'name':'', 'children':[]}
 				agents = [{'name': ea.agent.name} for ea in EventAgent.objects.filter(event = e.event)]
 				if(len(agents)> 0):
 					event['children'].append({'name':'agent', 'children':agents})
@@ -205,8 +204,12 @@ class EventQuery:
 				adjectives = [{'name':'(%s, %s)'%(ea.adjective.name,ea.noun.name)} for ea in EventAdjective.objects.filter(event = e.event)]
 				if(len(adjectives)> 0):
 					event['children'].append({'name':'adjectives', 'children':adjectives})
+				a_name = ','.join([agent['name'] for agent in agents])
+				p_name = ','.join([patient['name'] for patient in patients])
+				event_name = '[(%s) -- (%s)]' %(a_name, p_name)
+				event['name'] = event_name
 				events['children'].append(event)
-				i += 1
+				
 			res['children'].append(events)
 		return res	
 	
