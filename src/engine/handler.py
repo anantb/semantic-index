@@ -47,7 +47,6 @@ def handle_sentence(sen, reset = True):
 				temp[v[0]] = temp[v[1]]
 		except KeyError:
 			pass
-	print temp
 			
 			
 		
