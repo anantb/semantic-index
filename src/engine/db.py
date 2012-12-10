@@ -199,10 +199,10 @@ class EventQuery:
 				instruments = [{'name':ei.instrument.name, 'action':ei.action.name} for ei in EventInstrument.objects.filter(event = e.event)]
 				if(len(instruments)> 0):
 					event['children'].append({'name':'instruments', 'children':instruments})
-				adverbs = [{'name':ea.adverb.name, 'action':ea.action.name} for ea in EventAdverb.objects.filter(event = e.event)]
+				adverbs = [{'name':'(%s, %s)' %(ea.adverb.name, ea.action.name)} for ea in EventAdverb.objects.filter(event = e.event)]
 				if(len(adverbs)> 0):
 					event['children'].append({'name':'adverbs', 'children':adverbs})
-				adjectives = [{'name':ea.adjective.name, 'noun':ea.noun.name} for ea in EventAdjective.objects.filter(event = e.event)]
+				adjectives = [{'name':'(%s, %s)'%(ea.adjective.name,ea.noun.name)} for ea in EventAdjective.objects.filter(event = e.event)]
 				if(len(adjectives)> 0):
 					event['children'].append({'name':'adjectives', 'children':adjectives})
 				events['children'].append(event)
