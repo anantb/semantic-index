@@ -31,8 +31,13 @@ def propbank_parse_web(sen, url='/parse'):
 	params = {'sentence':sen, 'returnType':'text', 'doRenderDependencyGraph':'on'}
 	params = urllib.urlencode(params)
 	conn.request("POST", url, params, headers)	
-	res = conn.getresponse().read()
-	return res	
+	out = conn.getresponse().read()
+	res = {}
+	lines = re.split('\n', out)
+	for line in lines:
+		c = re.split('\t', line)
+		res[c[0]] = c[11]
+	return res
 	
 
 
@@ -48,7 +53,8 @@ def stanford_parse_web(sen, url='/parser/parser.jsp'):
 	return res	
 	
 if __name__ == "__main__":
-	print stanford_parse_local('John bought a green car.')
-	#print propbank_parse_web('John bought a green car at Cambridge.')
+	#print stanford_parse_local('John bought a green car.')
+	print propbank_parse_web('John bought a green car at Cambridge on Tuesday.')
+	#print x
 	#print propbank_parse_web('I hate NLP')
 	#print stanford_parse_web('I hate NLP')
