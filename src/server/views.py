@@ -36,7 +36,15 @@ def visualize(request):
 		out = engine.handler.handle(sen, act)
 		res = {'name':act, 'children':[]}
 		for event in out['events']:
-			e = {'name':'', 'children':[{'name':'agents'}, {'name':'patients'}, {'name':'beneficiaries'}, {'name':'instruments'}, {'name':'time'}, {'name':'locations'}]}
+			e = {'name':'', 'children':[{'name':'agents', 'children':[]}, {'name':'patients', 'children':[]}, {'name':'beneficiaries', 'children':[]}, {'name':'instruments', 'children':[]}, {'name':'time', 'children':[]}, {'name':'locations', 'children':[]}]}
+			for agent in event['agents']:
+				e['children'][0]['children'].append({'name':agent['agent']})
+			for patient in event['patients']:
+				e['children'][1]['children'].append({'name':patient['patient']})
+			for beneficiary in event['beneficiaries']:
+				e['children'][2]['children'].append({'name':beneficiary['beneficiary']})
+			for instrument in event['instruments']:
+				e['children'][0]['children'].append({'name':instrument['instrument']})
 			res['children'].append(e)
    
 		return HttpResponse(json.dumps(res), mimetype="application/json")
