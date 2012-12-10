@@ -4,6 +4,31 @@
 	<title>{% block title %}Semantic Browser{% endblock %}</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script type="text/javascript" src="/static/javascript/d3/d3.js"></script>
+	<script type="text/javascript" src="/static/javascript/d3/d3.layout.js"></script>
+	
+	
+ <style type="text/css">
+
+
+.node circle {
+  cursor: pointer;
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.node text {
+  font-size: 11px;
+}
+
+path.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+    </style>
 </head>
 
 <body>
