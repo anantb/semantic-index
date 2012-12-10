@@ -16,7 +16,7 @@ $(document).ready(function(){
 	$("#output").html("")
 	$("#parse").click(function(){
 		$("#output").html("Loading...")
-		$.post('/parse', {'text':$("#sentences").val(), 'action':$("#action").val()}, 
+		$.post('parse', {'text':$("#sentences").val(), 'action':$("#action").val()}, 
 			function(res){
 				$("#output").html(JSON.stringify(res));
 			}
