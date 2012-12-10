@@ -47,13 +47,13 @@ def handle_sentence(sen, reset = True):
 		elif(k=='amod'):
 			adj  = e.insert_adjective(word, temp[v[0]])
 			temp[v[1]] = temp[v[0]]
+		
 		elif(k=='conj_and'):
 			val = v[0]
 			word = val[:val.find('-')]
 			adj  = e.insert_adjective(word, temp[v[1]])
 			temp[v[0]] = temp[v[1]]
-			
-			
+		
 
 def handle(sentences, action):
 	handle_sentence(sentences[0])

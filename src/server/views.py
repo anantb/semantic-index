@@ -36,15 +36,33 @@ def visualize(request):
 		out = engine.handler.handle(sen, act)
 		res = {'name':act, 'children':[]}
 		for event in out['events']:
-			e = {'name':'', 'children':[{'name':'agents', 'children':[]}, {'name':'patients', 'children':[]}, {'name':'beneficiaries', 'children':[]}, {'name':'instruments', 'children':[]}, {'name':'time', 'children':[]}, {'name':'locations', 'children':[]}]}
+			e = {'name':'', 'children':[{'name':'agents'}, {'name':'patients'}, {'name':'adverbs'}, {'name':'beneficiaries'}, {'name':'instruments'}, {'name':'time'}, {'name':'locations'}]}
 			for agent in event['agents']:
-				e['children'][0]['children'].append({'name':agent['agent']})
+				e['children'][0]['children'] = []
+				a = {'name':agent['agent']}
+				a['children'] = []
+				for adj in event['adjectives']:
+					if(agent['agent'] == adj['noun']):
+						a['children'].append({'name':adj['adjective']})
+				e['children'][0]['children'].append(a)
 			for patient in event['patients']:
-				e['children'][1]['children'].append({'name':patient['patient']})
+				e['children'][1]['children'] = []
+				p = {'name':patient['patient']}
+				p['children'] = []
+				for adj in event['adjectives']:
+					if(patient['patient'] == adj['noun']):
+						p['children'].append({'name':adj['adjective']})
+				e['children'][1]['children'].append(p)
+			for adverb in event['adverbs']:
+				e['children'][2]['children'] = []
+				adv = {'name':adverb['adverb']}
+				e['children'][2]['children'].append(adv)
 			for beneficiary in event['beneficiaries']:
-				e['children'][2]['children'].append({'name':beneficiary['beneficiary']})
+				e['children'][3]['children'] = []
+				e['children'][3]['children'].append({'name':beneficiary['beneficiary']})
 			for instrument in event['instruments']:
-				e['children'][0]['children'].append({'name':instrument['instrument']})
+				e['children'][4]['children'] = []
+				e['children'][5]['children'].append({'name':instrument['instrument']})
 			res['children'].append(e)
    
 		return HttpResponse(json.dumps(res), mimetype="application/json")
