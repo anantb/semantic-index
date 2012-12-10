@@ -55,7 +55,9 @@ def handle_sentence(sen, reset = True):
 			temp[v[0]] = temp[v[1]]
 		
 
-def handle(sentences, action):
+def search(sentences, action):
+	if(len(sentences) == 0):
+		return {}
 	handle_sentence(sentences[0])
 	for i in xrange(1,len(sentences)):
 		handle_sentence(sentences[i], reset = False)
@@ -63,7 +65,16 @@ def handle(sentences, action):
 	res = q.search_action(action)
 	return res
 
+def visualize(sentences):
+	if(len(sentences) == 0):
+		return {}
+	handle_sentence(sentences[0])
+	for i in xrange(1,len(sentences)):
+		handle_sentence(sentences[i], reset = False)
+	q = EventQuery()
+	res = q.get_tree()
+	return res
 
 
 if __name__ == "__main__":
-	print handle(['The magical instrument heavenly exemplifies the beautiful building.'], 'exemplifies')
+	print search(['The magical instrument heavenly exemplifies the beautiful building.'], 'exemplifies')

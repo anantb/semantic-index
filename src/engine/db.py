@@ -18,6 +18,10 @@ class EventInstance:
 	def __init__(self, reset=True):
 		if(reset):
 			Event.objects.all().delete()
+			Action.objects.all().delete()
+			Noun.objects.all().delete()
+			Adverb.objects.all().delete()
+			Adjective.objects.all().delete()
 		self.e = Event()
 		self.e.save()
 	
@@ -165,6 +169,45 @@ class EventQuery:
 			event['adverbs'] = [{'adverb':ea.adverb.name, 'action':ea.action.name} for ea in EventAdverb.objects.filter(event = e.event)]
 			event['adjectives'] = [{'adjective':ea.adjective.name, 'noun':ea.noun.name} for ea in EventAdjective.objects.filter(event = e.event)]
 			res['events'].append(event)
+		return res
+		
+	def get_tree(self):
+		res = {'name':'root'}
+		res['children']=[]
+		actions = Action.objects.all()
+		for action in actions:
+			events = {'name':action.name, 'children':[]}
+			event_actions = EventAction.objects.filter(action = action)
+			i = 1
+			for e in event_actions:
+				event = {'name':i, 'children':[]}
+				agents = [{'name': ea.agent.name} for ea in EventAgent.objects.filter(event = e.event)]
+				if(len(agents)> 0):
+					event['children'].append({'name':'agent', 'children':agents})
+				patients = [{'name': ep.patient.name} for ep in EventPatient.objects.filter(event = e.event)]
+				if(len(patients)> 0):
+					event['children'].append({'name':'patients', 'children':patients})
+				beneficiaries = [{'name':eb.beneficiary.name} for ea in EventBeneficiary.objects.filter(event = e.event)]
+				if(len(beneficiaries)> 0):
+					event['children'].append({'name':'beneficiaries', 'children':beneficiaries})
+				locations = [{'name':el.location.name, 'action':el.action.name} for el in EventLocation.objects.filter(event = e.event)]
+				if(len(locations)> 0):
+					event['children'].append({'name':'locations', 'children':locations})
+				time = [{'name':et.time.name, 'action':et.action.name} for et in EventTime.objects.filter(event = e.event)]
+				if(len(time)> 0):
+					event['children'].append({'name':'time', 'children':time})
+				instruments = [{'name':ei.instrument.name, 'action':ei.action.name} for ei in EventInstrument.objects.filter(event = e.event)]
+				if(len(instruments)> 0):
+					event['children'].append({'name':'instruments', 'children':instruments})
+				adverbs = [{'name':ea.adverb.name, 'action':ea.action.name} for ea in EventAdverb.objects.filter(event = e.event)]
+				if(len(adverbs)> 0):
+					event['children'].append({'name':'adverbs', 'children':adverbs})
+				adjectives = [{'name':ea.adjective.name, 'noun':ea.noun.name} for ea in EventAdjective.objects.filter(event = e.event)]
+				if(len(adjectives)> 0):
+					event['children'].append({'name':'adjectives', 'children':adjectives})
+				events['children'].append(event)
+				i += 1
+			res['children'].append(events)
 		return res	
 	
 		
@@ -196,4 +239,6 @@ if __name__ == "__main__":
 	
 	q = EventQuery()
 	res = q.search_action('cut')
+	print res
+	res = q.get_tree()
 	print res

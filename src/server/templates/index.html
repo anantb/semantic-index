@@ -2,39 +2,54 @@
 {% block content %}
 <h1>Semantic Browser</h1>
 <hr />
+<table>
+<tr>
+<td>
 Please enter the sentences below: <br />
 <textarea id="sentences" rows="4" cols="50"></textarea>
 <br />
-Action: 
-<input type="text" id="action"></input> <br >
-<input type="button" id="parse" value="Search" />
 <input type="button" id="visualize" value="Visualize" />
+<br />
+</td>
+<td>
+<input type="text" id="action"></input> <input type="button" id="parse" value="Search Action" />
+<br />
+<input type="text" id="question"></input> <input type="button" id="ask" value="Ask Question" />
+</td>
+</tr>
+</table>
 <br /> <br />
-<div id= "notification">
-</div>
 <div id= "output">
 </div>
-<div id="body">
- </div>
+<div id= "body">
+</div>
 
 <script type="text/javascript">
 $(document).ready(function(){
 	$("#output").html("")
 	$("#parse").click(function(){
-		$("#notification").html("Loading Search Results...")
+		$("#output").html("Loading Search Results...")
 		$.post('parse', {'text':$("#sentences").val(), 'action':$("#action").val()}, 
 			function(res){
-				$("#notification").html("")
+				$("#output").html(JSON.stringify(res));				
+			}
+		);
+	});
+	
+	$("#ask").click(function(){
+		$("#output").html("Loading Answer...")
+		$.post('parse', {'text':$("#sentences").val(), 'action':$("#question").val()}, 
+			function(res){
 				$("#output").html(JSON.stringify(res));				
 			}
 		);
 	});
 	
 	$("#visualize").click(function(){
-		$("#notification").html("Loading Visualization...")
-		$.post('visualize', {'text':$("#sentences").val(), 'action':$("#action").val()}, 
+		$("#output").html("Loading Visualization...")
+		$.post('visualize', {'text':$("#sentences").val()}, 
 			function(res){
-			  $("#notification").html("")
+			  $("#output").html(JSON.stringify(res));
 	  		  root = res;
 	  		  root.x0 = h / 2;
 	  		  root.y0 = 0;
