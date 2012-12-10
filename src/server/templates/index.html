@@ -10,6 +10,8 @@ Action:
 <input type="button" id="parse" value="Search" />
 <input type="button" id="visualize" value="Visualize" />
 <br /> <br />
+<div id= "notification">
+</div>
 <div id= "output">
 </div>
 <div id="body">
@@ -19,17 +21,20 @@ Action:
 $(document).ready(function(){
 	$("#output").html("")
 	$("#parse").click(function(){
-		$("#output").html("Loading...")
+		$("#notification").html("Loading Search Results...")
 		$.post('parse', {'text':$("#sentences").val(), 'action':$("#action").val()}, 
 			function(res){
+				$("#notification").html("")
 				$("#output").html(JSON.stringify(res));				
 			}
 		);
 	});
 	
 	$("#visualize").click(function(){
+		$("#notification").html("Loading Visualization...")
 		$.post('visualize', {'text':$("#sentences").val(), 'action':$("#action").val()}, 
 			function(res){
+			  $("#notification").html("")
 	  		  root = res;
 	  		  root.x0 = h / 2;
 	  		  root.y0 = 0;
@@ -43,7 +48,7 @@ $(document).ready(function(){
 
 	  		  // Initialize the display to show a few nodes.
 	  		  root.children.forEach(toggleAll);
-	  		  toggle(root.children[1]);
+	  		  toggle(root.children[0]);
 
 	  		  update(root);			
 			}

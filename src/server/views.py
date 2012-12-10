@@ -33,8 +33,11 @@ def visualize(request):
 		sen = re.split('\n', request.POST['text'])
 		sen = filter(lambda x: x!='' and x !='\n', sen)
 		act = request.POST['action']
-		#res = engine.handler.handle(sen, act)
-		res = {'name': 'root',  'children': [ { 'name':'nsubj'}, {'name':'nobj'}]}
+		out = engine.handler.handle(sen, act)
+		res = {'name':act, 'children':[]}
+		for event in out['events']:
+			e = {'name':'', 'children':[{'name':'agents'}, {'name':'patients'}, {'name':'beneficiaries'}, {'name':'instruments'}, {'name':'time'}, {'name':'locations'}]}
+			res['children'].append(e)
    
 		return HttpResponse(json.dumps(res), mimetype="application/json")
 	except:
