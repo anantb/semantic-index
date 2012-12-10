@@ -26,7 +26,7 @@ def handle_sentence(sen, reset = True):
 	e = EventInstance(reset)
 	res = stanford_parse_local(sen)
 	temp = {}
-	tags = sorted(res.items(), key = lambda x:get_index(x[0]))
+	tags = sorted(res, key = lambda x:get_index(x[0]))
 	for tag in tags:
 		k = tag[0]
 		v = tag[1]		
@@ -66,4 +66,4 @@ def handle(sentences, action):
 
 
 if __name__ == "__main__":
-	print handle(['The red and green ball bounces well.', 'The blue and purple ball bounces badly.'], 'bounces')
+	print handle(['The magical instrument heavenly exemplifies the beautiful building.'], 'exemplifies')

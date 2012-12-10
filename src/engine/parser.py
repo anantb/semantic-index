@@ -15,12 +15,12 @@ def stanford_parse_local(sen):
 	out, err = p.communicate()
 	x = str(out.strip())
 	z = re.findall(r'(\w+?\(.+?\))', x)
-	res = {}
+	res = []
 	for i in xrange(0, len(z)):
 		p = z[i][:z[i].find('(')]
 		q = z[i][z[i].find('(')+1: z[i].find(',')]
 		r = z[i][z[i].find(',')+1:-1].strip()
-		res[p]=[q,r]
+		res.append([p, [q,r]])
 	return res
 
 
