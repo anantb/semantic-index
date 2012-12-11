@@ -22,11 +22,9 @@ def get_index(k):
 		return 1000
 	
 
-def handle_sentence(sen, reset = True):
+def handle_sentence(tags, reset = True):
+	temp = {}	
 	e = EventInstance(reset)
-	res = stanford_parse_local(sen)
-	temp = {}
-	tags = sorted(res, key = lambda x:get_index(x[0]))
 	for tag in tags:
 		k = tag[0]
 		v = tag[1]		
@@ -59,9 +57,12 @@ def handle_sentence(sen, reset = True):
 def search(sentences, action):
 	if(len(sentences) == 0):
 		return {}
-	handle_sentence(sentences[0])
-	for i in xrange(1,len(sentences)):
-		handle_sentence(sentences[i], reset = False)
+	
+	parses = [stanford_parse_local(sen) for sen in sentences]
+	tags_set = [sorted(parse, key = lambda x:get_index(x[0])) for parse in parses]
+	handle_sentence(tags_set[0])
+	for i in xrange(1,len(tags_set)):
+		handle_sentence(tags_set[i], reset = False)
 	q = EventQuery()
 	res = q.search_action(action)
 	return res
@@ -69,9 +70,11 @@ def search(sentences, action):
 def visualize(sentences):
 	if(len(sentences) == 0):
 		return {}
-	handle_sentence(sentences[0])
-	for i in xrange(1,len(sentences)):
-		handle_sentence(sentences[i], reset = False)
+	parses = [stanford_parse_local(sen) for sen in sentences]
+	tags_set = [sorted(parse, key = lambda x:get_index(x[0])) for parse in parses]
+	handle_sentence(tags_set[0])
+	for i in xrange(1,len(tags_set)):
+		handle_sentence(tags_set[i], reset = False)
 	q = EventQuery()
 	res = q.get_tree()
 	return res
