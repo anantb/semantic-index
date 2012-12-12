@@ -164,13 +164,13 @@ class EventQuery:
 		answers = {'answer':[]}
 		try:
 			res = {}
-			print q
+			#print q
 			action = Action.objects.get(name=q['action'])	
 			event_actions = EventAction.objects.filter(action = action, event__in = Event.objects.filter(session = self.s))
 			res['events']=[]
 			q_key = [key for (key,value) in q.items() if value.lower() in ['who', 'when', 'where', 'what']]
 			match_key = [key for (key,value) in q.items() if value.lower() not in ['who', 'when', 'where', 'what'] and key.lower() not in ['action']]
-			print match_key
+			#print match_key
 			for e in event_actions:
 				event = {}
 				event['id'] = e.event_id
