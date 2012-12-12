@@ -15,15 +15,18 @@ Actual Schema
 
 '''
 class EventInstance:
-	def __init__(self, reset=True):
-		if(reset):
-			Event.objects.all().delete()
-			Action.objects.all().delete()
-			Noun.objects.all().delete()
-			Adverb.objects.all().delete()
-			Adjective.objects.all().delete()
-		self.e = Event()
+	def __init__(self, session = None):
+		s = session
+		if(not s):
+			s = Session()
+			s.save()
+		self.e = Event(session = s)
 		self.e.save()
+		self.session = s
+		
+	def get_session(self):
+		return self.session
+		
 	
 	
 	def insert_action(self, action):
@@ -62,33 +65,6 @@ class EventInstance:
 		_epatient.save()
 		return _patient
 		
-	
-	
-	def insert_beneficiary(self, beneficiary, action):
-		_beneficiary = None
-		try:
-			_beneficiary = Noun.objects.get(name = beneficiary)
-		except Noun.DoesNotExist:
-			_beneficiary = Noun(name= beneficiary)
-			_beneficiary.save()
-		_ebeneficiary = EventBenificiary(beneficiary = _beneficiary, action = action, event = self.e)
-		_ebeneficiary.save()
-		return _beneficiary
-		
-	
-	
-	def insert_instrument(self, instrument, action):
-		_instrument = None
-		try:
-			_instrument = Noun.objects.get(name = instrument)
-		except Noun.DoesNotExist:
-			_instrument = Noun(name= instrument)
-			_instrument.save()
-		_einstrument = EventInstrument(instrument = _instrument, action = action, event = self.e)
-		_einstrument.save()
-		return _instrument
-		
-	
 	
 	def insert_location(self, location, action):
 		_location = None
@@ -131,6 +107,17 @@ class EventInstance:
 		return _adjective
 	
 	
+	def insert_determiner(self, determiner, noun):
+		_determiner = None
+		try:
+			_determiner = Determiner.objects.get(name = determiner)
+		except Determiner.DoesNotExist:
+			_determiner = Determiner(name= determiner)
+			_determiner.save()
+		_edeterminer = EventDeterminer(determiner = _determiner, noun = noun, event = self.e)
+		_edeterminer.save()
+		return _edeterminer
+	
 	
 	def insert_adverb(self, adverb, action):
 		_adverb = None
@@ -149,61 +136,60 @@ class EventInstance:
 
 
 class EventQuery:
-	def __init__(self):
-		self.event = None
+	def __init__(self, session):
+		self.s  = session
 	
 	def search_action(self, action):
 		res = {}
 		action = Action.objects.get(name=action)	
-		event_actions = EventAction.objects.filter(action = action)
+		event_actions = EventAction.objects.filter(action = action, event__in = Event.objects.filter(session = self.s))
 		res['events']=[]
 		for e in event_actions:
 			event = {}
 			event['id'] = e.event_id
 			event['agents'] = [{'agent': ea.agent.name} for ea in EventAgent.objects.filter(event = e.event)]
 			event['patients'] = [{'patient': ep.patient.name} for ep in EventPatient.objects.filter(event = e.event)]
-			event['beneficiaries'] = [{'beneficiary':eb.beneficiary.name} for ea in EventBeneficiary.objects.filter(event = e.event)]
 			event['locations'] = [{'location':el.location.name, 'action':el.action.name} for el in EventLocation.objects.filter(event = e.event)]
 			event['time'] = [{'time':et.time.name, 'action':et.action.name} for et in EventTime.objects.filter(event = e.event)]
-			event['instruments'] = [{'instrument':ei.instrument.name, 'action':ei.action.name} for ei in EventInstrument.objects.filter(event = e.event)]
 			event['adverbs'] = [{'adverb':ea.adverb.name, 'action':ea.action.name} for ea in EventAdverb.objects.filter(event = e.event)]
 			event['adjectives'] = [{'adjective':ea.adjective.name, 'noun':ea.noun.name} for ea in EventAdjective.objects.filter(event = e.event)]
+			event['determiners'] = [{'determiner':ea.determiner.name, 'noun':ea.noun.name} for ea in EventDeterminer.objects.filter(event = e.event)]
 			res['events'].append(event)
 		return res
 		
 	def get_tree(self):
 		res = {'name':'root'}
 		res['children']=[]
-		actions = Action.objects.all()
+		print self.s.id
+		actions = Action.objects.filter()
 		for action in actions:
+			event_actions = EventAction.objects.filter(action = action, event__in = Event.objects.filter(session = self.s))
+			if(len(event_actions) == 0):
+				continue
 			events = {'name':action.name, 'children':[]}
-			event_actions = EventAction.objects.filter(action = action)
 			for e in event_actions:
 				event = {'name':'', 'children':[]}
 				agents = [{'name': ea.agent.name} for ea in EventAgent.objects.filter(event = e.event)]
 				if(len(agents)> 0):
-					event['children'].append({'name':'agent', 'children':agents})
+					event['children'].append({'name':'agents', 'children':agents})
 				patients = [{'name': ep.patient.name} for ep in EventPatient.objects.filter(event = e.event)]
 				if(len(patients)> 0):
 					event['children'].append({'name':'patients', 'children':patients})
-				beneficiaries = [{'name':eb.beneficiary.name} for ea in EventBeneficiary.objects.filter(event = e.event)]
-				if(len(beneficiaries)> 0):
-					event['children'].append({'name':'beneficiaries', 'children':beneficiaries})
 				locations = [{'name':el.location.name, 'action':el.action.name} for el in EventLocation.objects.filter(event = e.event)]
 				if(len(locations)> 0):
 					event['children'].append({'name':'locations', 'children':locations})
 				time = [{'name':et.time.name, 'action':et.action.name} for et in EventTime.objects.filter(event = e.event)]
 				if(len(time)> 0):
 					event['children'].append({'name':'time', 'children':time})
-				instruments = [{'name':ei.instrument.name, 'action':ei.action.name} for ei in EventInstrument.objects.filter(event = e.event)]
-				if(len(instruments)> 0):
-					event['children'].append({'name':'instruments', 'children':instruments})
 				adverbs = [{'name':'(%s, %s)' %(ea.adverb.name, ea.action.name)} for ea in EventAdverb.objects.filter(event = e.event)]
 				if(len(adverbs)> 0):
 					event['children'].append({'name':'adverbs', 'children':adverbs})
 				adjectives = [{'name':'(%s, %s)'%(ea.adjective.name,ea.noun.name)} for ea in EventAdjective.objects.filter(event = e.event)]
 				if(len(adjectives)> 0):
 					event['children'].append({'name':'adjectives', 'children':adjectives})
+				determiners = [{'name':'(%s, %s)'%(ea.determiner.name,ea.noun.name)} for ea in EventDeterminer.objects.filter(event = e.event)]
+				if(len(determiners)> 0):
+					event['children'].append({'name':'determiners', 'children':determiners})
 				a_name = ','.join([agent['name'] for agent in agents])
 				p_name = ','.join([patient['name'] for patient in patients])
 				event_name = '[(%s) -- (%s)]' %(a_name, p_name)

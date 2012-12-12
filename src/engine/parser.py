@@ -13,14 +13,18 @@ def stanford_parse_local(sen):
 	cmd = ["java -classpath %s/stanford-parser.jar:%s/stanford-parser-2.0.4-models.jar:%s: Parser '%s'" %(path,path,path, sen)]
 	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell = True)
 	out, err = p.communicate()
-	x = str(out.strip())
-	z = re.findall(r'(\w+?\(.+?\))', x)
+	out = str(out.strip())
+	out = re.split(r'\n', out)
 	res = []
-	for i in xrange(0, len(z)):
-		p = z[i][:z[i].find('(')]
-		q = z[i][z[i].find('(')+1: z[i].find(',')]
-		r = z[i][z[i].find(',')+1:-1].strip()
-		res.append([p, [q,r]])
+	for x in out:
+		z = re.findall(r'(\w+?\(.+?\))', x)
+		sen = []
+		for i in xrange(0, len(z)):
+			p = z[i][:z[i].find('(')]
+			q = z[i][z[i].find('(')+1: z[i].find(',')]
+			r = z[i][z[i].find(',')+1:-1].strip()
+			sen.append([p, [q,r]])
+		res.append(sen)
 	return res
 
 
@@ -52,9 +56,13 @@ def stanford_parse_web(sen, url='/parser/parser.jsp'):
 	res = conn.getresponse().read().strip()
 	return res	
 	
+x= """
+I hate NLP.
+I love NLP.
+"""
 if __name__ == "__main__":
-	#print stanford_parse_local('John bought a green car.')
-	print propbank_parse_web('John bought a green car at Cambridge on Tuesday.')
+	print stanford_parse_local(x)
+	#print propbank_parse_web('She won because she played well.')
 	#print x
 	#print propbank_parse_web('I hate NLP')
 	#print stanford_parse_web('I hate NLP')

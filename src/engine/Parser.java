@@ -13,13 +13,13 @@ import edu.stanford.nlp.trees.*;
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 
 
-'''
+/**
 @author: anant bhardwaj
 @date: Dec 8, 2012
 
 A class that wraps stanford parser
 
-'''
+*/
 
 class Parser {
 
@@ -29,16 +29,21 @@ class Parser {
 			System.out.println("Usage : Parser <sentence>");
 			System.exit(1);
 		}
-		String sen = args[0];
+		String sentences = args[0];
+		String[] sen = sentences.split("\\r?\\n");
 		TokenizerFactory<CoreLabel> tokenizerFactory =
 		PTBTokenizer.factory(new CoreLabelTokenFactory(), "");
-		List<CoreLabel> tokens = tokenizerFactory.getTokenizer(new StringReader(sen)).tokenize();
-		Tree parse = lp.apply(tokens);    
 		TreebankLanguagePack tlp = new PennTreebankLanguagePack();
 		GrammaticalStructureFactory gsf = tlp.grammaticalStructureFactory();
-		GrammaticalStructure gs = gsf.newGrammaticalStructure(parse);
-		List<TypedDependency> tdl = gs.typedDependenciesCCprocessed();
-		System.out.println(tdl);
+		for(int i=0; i<sen.length; i++){
+			if((sen[i]!=null) && (sen[i].length() >0)) {
+				List<CoreLabel> tokens = tokenizerFactory.getTokenizer(new StringReader(sen[i])).tokenize();
+				Tree parse = lp.apply(tokens);    
+				GrammaticalStructure gs = gsf.newGrammaticalStructure(parse);
+				List<TypedDependency> tdl = gs.typedDependenciesCCprocessed();
+				System.out.println(tdl);
+			}
+		}
 
 	}	
 }

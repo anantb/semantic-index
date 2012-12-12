@@ -8,11 +8,21 @@ Semantic Index Models
 '''
 
 
+class Session(models.Model):
+	id = models.AutoField(primary_key=True)
+
+	def __unicode__(self):
+		return self.name
+	
+	class Meta:
+		db_table = "sessions"
+
 
 
 class Event(models.Model):
 	id = models.AutoField(primary_key=True)
-
+	session = models.ForeignKey('Session')
+	
 	def __unicode__(self):
 		return self.name
 	
@@ -52,6 +62,17 @@ class Adjective(models.Model):
 	
 	class Meta:
 		db_table = "adjectives"
+
+
+class Determiner(models.Model):
+	id = models.AutoField(primary_key=True, unique=True)
+	name = models.CharField(max_length=50)
+	
+	def __unicode__(self):
+		return self.name
+	
+	class Meta:
+		db_table = "determiners"
 		
 		
 class Adverb(models.Model):
@@ -103,32 +124,6 @@ class EventAction(models.Model):
 
 
 
-class EventBeneficiary(models.Model):
-	id = models.AutoField(primary_key=True)
-	benificiary = models.ForeignKey('Noun')
-	action = models.ForeignKey('Action')
-	event = models.ForeignKey('Event')
-	
-	def __unicode__(self):
-		return self.name
-	
-	class Meta:
-		db_table = "event_beneficiaries"
-		
-		
-
-class EventInstrument(models.Model):
-	id = models.AutoField(primary_key=True)
-	instrument = models.ForeignKey('Noun')
-	action = models.ForeignKey('Action')
-	event = models.ForeignKey('Event')
-	
-	def __unicode__(self):
-		return self.name
-	
-	class Meta:
-		db_table = "event_instruments"
-		
 
 class EventLocation(models.Model):
 	id = models.AutoField(primary_key=True)
@@ -166,7 +161,21 @@ class EventAdjective(models.Model):
 		return self.name
 	
 	class Meta:
-		db_table = "event_adjective"
+		db_table = "event_adjectives"
+		
+
+
+class EventDeterminer(models.Model):
+	id = models.AutoField(primary_key=True)
+	determiner = models.ForeignKey('Determiner')
+	noun = models.ForeignKey('Noun')
+	event = models.ForeignKey('Event')
+	
+	def __unicode__(self):
+		return self.name
+	
+	class Meta:
+		db_table = "event_determiners"
 		
 
 class EventAdverb(models.Model):
@@ -179,5 +188,5 @@ class EventAdverb(models.Model):
 		return self.name
 	
 	class Meta:
-		db_table = "event_adverb"
+		db_table = "event_adverbs"
 		
