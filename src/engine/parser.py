@@ -8,6 +8,18 @@ path = os.path.abspath(os.path.dirname(__file__))
 
 a wrapper over third-party parsers
 '''
+'''
+parser = None
+def startJvm():
+    jpype.startJVM(jpype.getDefaultJVMPath(),
+                   "-ea",
+                   "-Djava.class.path=%s:%s/stanford-parser.jar:%s/stanford-parser-2.0.4-models.jar" % (path, path, path))
+				   
+if(not parser):
+	startJvm() # one jvm per python instance.
+	package_parser = jpype.JPackage("parser")
+	parser = package_parser.Parser()
+'''
 
 def stanford_parse_local(sen):
 	cmd = ["java -classpath %s/stanford-parser.jar:%s/stanford-parser-2.0.4-models.jar:%s: Parser '%s'" %(path,path,path, sen)]
