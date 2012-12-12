@@ -164,24 +164,34 @@ class EventQuery:
 		answers = {'answer':[]}
 		try:
 			res = {}
+			print q
 			action = Action.objects.get(name=q['action'])	
 			event_actions = EventAction.objects.filter(action = action, event__in = Event.objects.filter(session = self.s))
 			res['events']=[]
 			q_key = [key for (key,value) in q.items() if value.lower() in ['who', 'when', 'where', 'what']]
+			match_key = [key for (key,value) in q.items() if value.lower() not in ['who', 'when', 'where', 'what'] and key.lower() not in ['action']]
+			print match_key
 			for e in event_actions:
 				event = {}
 				event['id'] = e.event_id
-				event['agents'] = [{'agent': ea.agent.name} for ea in EventAgent.objects.filter(event = e.event)]
-				event['patients'] = [{'patient': ep.patient.name} for ep in EventPatient.objects.filter(event = e.event)]
-				event['locations'] = [{'location':el.location.name, 'action':el.action.name} for el in EventLocation.objects.filter(event = e.event)]
-				event['time'] = [{'time':et.time.name, 'action':et.action.name} for et in EventTime.objects.filter(event = e.event)]
-				event['adverbs'] = [{'adverb':ea.adverb.name, 'action':ea.action.name} for ea in EventAdverb.objects.filter(event = e.event)]
-				event['adjectives'] = [{'adjective':ea.adjective.name, 'noun':ea.noun.name} for ea in EventAdjective.objects.filter(event = e.event)]
-				event['determiners'] = [{'determiner':ea.determiner.name, 'noun':ea.noun.name} for ea in EventDeterminer.objects.filter(event = e.event)]
+				event['agents'] = [ea.agent.name for ea in EventAgent.objects.filter(event = e.event)]
+				event['patients'] = [ep.patient.name for ep in EventPatient.objects.filter(event = e.event)]
+				event['locations'] = [el.location.name for el in EventLocation.objects.filter(event = e.event)]
+				event['time'] = [et.time.name for et in EventTime.objects.filter(event = e.event)]
+				event['adverbs'] = [ea.adverb.name for ea in EventAdverb.objects.filter(event = e.event)]
+				event['adjectives'] = [ea.adjective.name for ea in EventAdjective.objects.filter(event = e.event)]
+				event['determiners'] = [ea.determiner.name for ea in EventDeterminer.objects.filter(event = e.event)]
 				res['events'].append(event)
 				for k in q_key:
+					#print k
 					if(len(event[k])>0):
-						answers['answer'].append(event[k])
+						#print event[k]
+						for k_ in match_key:
+							#print k_
+							if q[k_] in event[k_]:
+								#print q[k_], event[k_]
+								answers['answer'].append({k:event[k]})
+					
 		except:
 			pass
 		return answers
