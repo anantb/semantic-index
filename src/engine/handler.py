@@ -82,6 +82,38 @@ def handle_sentence(tags, pb_tags = None, sen = None, session = None):
 			temp[v[1]] = patient
 	return e.get_session()
 
+
+def handle_question(tags):
+	res = {}
+	temp = {}	
+	for tag in tags:
+		k = tag[0]
+		v = tag[1]		
+		val = v[1]
+		word = val[:val.find('-')]
+		if(k in ['root']):
+			res['action'] = word
+			temp[v[1]] = res['action']
+		elif(k in ['nsubj', 'agent', 'pobj']):
+			res['agents'] = word
+			temp[v[1]] = res['agents']
+		elif(k in ['dobj', 'nsubjpass']):
+			res['patients'] = word
+			temp[v[1]] = res['patients']
+		elif(k in ['advmod']):
+			try:
+				if(word.lower() == 'where'):
+					res['locations'] = word
+				elif(word.lower() == 'when'):
+					res['time'] = word
+				else:
+					res['adverbs'] = word
+				temp[v[1]] = temp[v[0]]
+			except KeyError:
+				pass			
+	return res
+
+
 def search(sentences, action):
 	if(len(sentences) == 0):
 		return {}
@@ -108,7 +140,24 @@ def visualize(sentences):
 	q = EventQuery(session)
 	res = q.get_tree()
 	return res
+	
+
+def answer(sentences, question):
+	if(len(sentences) == 0):
+		return {}
+	parses = stanford_parse_local('\n'.join([sen for sen in sentences]))
+	tags_set = [sorted(parse, key = lambda x:get_index(x[0])) for parse in parses]
+	pb_tags_set = [propbank_parse_web(sen) for sen in sentences]
+	session = handle_sentence(tags_set[0],sen = sentences[0], pb_tags = pb_tags_set[0])
+	for i in xrange(1,len(tags_set)):
+		handle_sentence(tags_set[i], pb_tags = pb_tags_set[i], sen = sentences[i], session = session)
+	parses = stanford_parse_local(question)
+	tags_set = [sorted(parse, key = lambda x:get_index(x[0])) for parse in parses]
+	q_tags = handle_question(tags_set[0])
+	q = EventQuery(session)
+	res = q.answer_question(q_tags)
+	return res
 
 
 if __name__ == "__main__":
-	print search(['The magical instrument heavenly exemplifies the beautiful building.'], 'exemplifies')
+	print answer(['John runs on the road.'], 'Where John runs')

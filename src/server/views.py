@@ -36,3 +36,15 @@ def visualize(request):
 		return HttpResponse(json.dumps(res), mimetype="application/json")
 	except:
 		return HttpResponse(json.dumps({'error':str(sys.exc_info())}), mimetype="application/json")
+		
+
+@csrf_exempt	
+def answer(request):
+	try:
+		sen = re.split('\n', request.POST['text'])
+		sen = filter(lambda x: x!='' and x !='\n', sen)
+		question = request.POST['question']
+		res = engine.handler.answer(sen, question)   
+		return HttpResponse(json.dumps(res), mimetype="application/json")
+	except:
+		return HttpResponse(json.dumps({'error':str(sys.exc_info())}), mimetype="application/json")

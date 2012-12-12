@@ -17,10 +17,9 @@ The singers brilliantly entertained the audience in the lively stadium.
 </td>
 <td>
 <input type="text" id="action" value="advised"></input> <input type="button" id="parse" value="Search Action" />
-<!--
+
 <br />
-<input type="text" id="question"></input> <input type="button" id="ask" value="Ask Question" />
--->
+<input type="text" id="question" value="Who advised Anant?"></input> <input type="button" id="ask" value="Answer Question" />
 </td>
 </tr>
 </table>
@@ -44,7 +43,7 @@ $(document).ready(function(){
 	
 	$("#ask").click(function(){
 		$("#output").html("Loading Answer...")
-		$.post('parse', {'text':$("#sentences").val(), 'action':$("#question").val()}, 
+		$.post('answer', {'text':$("#sentences").val(), 'question':$("#question").val()}, 
 			function(res){
 				$("#output").html(JSON.stringify(res));				
 			}

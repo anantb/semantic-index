@@ -141,21 +141,50 @@ class EventQuery:
 	
 	def search_action(self, action):
 		res = {}
-		action = Action.objects.get(name=action)	
-		event_actions = EventAction.objects.filter(action = action, event__in = Event.objects.filter(session = self.s))
-		res['events']=[]
-		for e in event_actions:
-			event = {}
-			event['id'] = e.event_id
-			event['agents'] = [{'agent': ea.agent.name} for ea in EventAgent.objects.filter(event = e.event)]
-			event['patients'] = [{'patient': ep.patient.name} for ep in EventPatient.objects.filter(event = e.event)]
-			event['locations'] = [{'location':el.location.name, 'action':el.action.name} for el in EventLocation.objects.filter(event = e.event)]
-			event['time'] = [{'time':et.time.name, 'action':et.action.name} for et in EventTime.objects.filter(event = e.event)]
-			event['adverbs'] = [{'adverb':ea.adverb.name, 'action':ea.action.name} for ea in EventAdverb.objects.filter(event = e.event)]
-			event['adjectives'] = [{'adjective':ea.adjective.name, 'noun':ea.noun.name} for ea in EventAdjective.objects.filter(event = e.event)]
-			event['determiners'] = [{'determiner':ea.determiner.name, 'noun':ea.noun.name} for ea in EventDeterminer.objects.filter(event = e.event)]
-			res['events'].append(event)
+		try:
+			action = Action.objects.get(name=action)	
+			event_actions = EventAction.objects.filter(action = action, event__in = Event.objects.filter(session = self.s))
+			res['events']=[]
+			for e in event_actions:
+				event = {}
+				event['id'] = e.event_id
+				event['agents'] = [{'agent': ea.agent.name} for ea in EventAgent.objects.filter(event = e.event)]
+				event['patients'] = [{'patient': ep.patient.name} for ep in EventPatient.objects.filter(event = e.event)]
+				event['locations'] = [{'location':el.location.name, 'action':el.action.name} for el in EventLocation.objects.filter(event = e.event)]
+				event['time'] = [{'time':et.time.name, 'action':et.action.name} for et in EventTime.objects.filter(event = e.event)]
+				event['adverbs'] = [{'adverb':ea.adverb.name, 'action':ea.action.name} for ea in EventAdverb.objects.filter(event = e.event)]
+				event['adjectives'] = [{'adjective':ea.adjective.name, 'noun':ea.noun.name} for ea in EventAdjective.objects.filter(event = e.event)]
+				event['determiners'] = [{'determiner':ea.determiner.name, 'noun':ea.noun.name} for ea in EventDeterminer.objects.filter(event = e.event)]
+				res['events'].append(event)
+		except:
+			pass
 		return res
+		
+	def answer_question(self, q):
+		answers = {'answer':[]}
+		try:
+			res = {}
+			action = Action.objects.get(name=q['action'])	
+			event_actions = EventAction.objects.filter(action = action, event__in = Event.objects.filter(session = self.s))
+			res['events']=[]
+			q_key = [key for (key,value) in q.items() if value.lower() in ['who', 'when', 'where', 'what']]
+			for e in event_actions:
+				event = {}
+				event['id'] = e.event_id
+				event['agents'] = [{'agent': ea.agent.name} for ea in EventAgent.objects.filter(event = e.event)]
+				event['patients'] = [{'patient': ep.patient.name} for ep in EventPatient.objects.filter(event = e.event)]
+				event['locations'] = [{'location':el.location.name, 'action':el.action.name} for el in EventLocation.objects.filter(event = e.event)]
+				event['time'] = [{'time':et.time.name, 'action':et.action.name} for et in EventTime.objects.filter(event = e.event)]
+				event['adverbs'] = [{'adverb':ea.adverb.name, 'action':ea.action.name} for ea in EventAdverb.objects.filter(event = e.event)]
+				event['adjectives'] = [{'adjective':ea.adjective.name, 'noun':ea.noun.name} for ea in EventAdjective.objects.filter(event = e.event)]
+				event['determiners'] = [{'determiner':ea.determiner.name, 'noun':ea.noun.name} for ea in EventDeterminer.objects.filter(event = e.event)]
+				res['events'].append(event)
+				for k in q_key:
+					if(len(event[k])>0):
+						answers['answer'].append(event[k])
+		except:
+			pass
+		return answers
 		
 	def get_tree(self):
 		res = {'name':'root'}
