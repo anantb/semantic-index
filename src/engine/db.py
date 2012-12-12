@@ -160,7 +160,6 @@ class EventQuery:
 	def get_tree(self):
 		res = {'name':'root'}
 		res['children']=[]
-		print self.s.id
 		actions = Action.objects.filter()
 		for action in actions:
 			event_actions = EventAction.objects.filter(action = action, event__in = Event.objects.filter(session = self.s))
