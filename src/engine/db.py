@@ -192,6 +192,13 @@ class EventQuery:
 							if q[k_] in event[k_]:
 								#print q[k_], event[k_]
 								answers['answer'].append({k:event[k]})
+				if(len(answers['answer']) == 0):
+					answers['answer'] = True
+					for k_ in match_key:
+						if q[k_] not in event[k_]:
+							answers['answer'] = False
+					
+				
 					
 		except:
 			pass
