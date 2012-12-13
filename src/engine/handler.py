@@ -106,7 +106,7 @@ def handle_question(tags):
 					res['locations'] = word
 				elif(word.lower() == 'when'):
 					res['time'] = word
-				else:
+				else: #(includes how)
 					res['adverbs'] = word
 				temp[v[1]] = temp[v[0]]
 			except KeyError:
