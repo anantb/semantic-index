@@ -5,7 +5,7 @@ if(os.path.abspath(p+"/..") not in sys.path):
 	sys.path.append(os.path.abspath(p+"/.."))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "server.settings")
 from server.models import *
-
+import en
 
 '''
 @author: anant bhardwaj
@@ -29,8 +29,9 @@ class EventInstance:
 		
 	
 	
-	def insert_action(self, action):
+	def insert_action(self, action_input):
 		_action = None
+		action = en.verb.present(action_input)
 		try:
 			_action = Action.objects.get(name = action)
 		except Action.DoesNotExist:
@@ -142,7 +143,7 @@ class EventQuery:
 	def search_action(self, action):
 		res = {}
 		try:
-			action = Action.objects.get(name=action)	
+			action = Action.objects.get(name=en.verb.present(action))	
 			event_actions = EventAction.objects.filter(action = action, event__in = Event.objects.filter(session = self.s))
 			res['events']=[]
 			for e in event_actions:
@@ -165,7 +166,7 @@ class EventQuery:
 		try:
 			res = {}
 			#print q
-			action = Action.objects.get(name=q['action'])	
+			action = Action.objects.get(name=en.verb.present(q['action']))
 			event_actions = EventAction.objects.filter(action = action, event__in = Event.objects.filter(session = self.s))
 			res['events']=[]
 			q_key = [key for (key,value) in q.items() if value.lower() in ['who', 'when', 'where', 'what']]
