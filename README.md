@@ -2,18 +2,17 @@
 
 #### setup environment
 
-* install required linux packages
-* sudo apt-get install postgresql
+* install postgres
 
 
 #### install required python packages
-* pip install django
-* pip install psycopg2
-* pip install stemming
+* `pip install django`
+* `pip install psycopg2`
+* `pip install stemming`
 
 
 #### download semantic-index
-* git clone git@github.com:abhardwaj/semantic-index.git
+* `git clone git@github.com:abhardwaj/semantic-index.git`
 
 
 #### make configuration changes
