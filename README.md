@@ -7,32 +7,26 @@
 
 
 #### install required python packages
-pip install django
-pip install psycopg2
-pip install stemming
+* pip install django
+* pip install psycopg2
+* pip install stemming
 
 
 #### download semantic-index
-git clone git@github.com:abhardwaj/semantic-index.git
+* git clone git@github.com:abhardwaj/semantic-index.git
 
 
 #### make configuration changes
 
-edit django configuration settings
-vi server/settings.py 
-
-setup postgres database
-psql -U postgres -W -h localhost
-create database nlp
-
- install schema
-cd src/
-python manage.py syncdb
+* setup postgres database
+* create database nlp
+* install schema
+`python manage.py syncdb`
 
 
 #### running in development mode
 
-run semantic-index server
-python manage.py runserver
+* run semantic-index server
+`python manage.py runserver`
 
 
